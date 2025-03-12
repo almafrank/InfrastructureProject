@@ -20,7 +20,10 @@ resource "aws_key_pair" "deployer_key" {
 # Skapa en EC2-instans
 resource "aws_instance" "webserver" {
   key_name        = aws_key_pair.deployer_key.key_name
-  count         = var.instance_count 
+  count         = var.instance_count  # This will create multiple instances
+  ami           = var.ami_id# Replace with your valid AMI ID
+  instance_type = var.instance_type  # Choose your instance type
+
   vpc_security_group_ids = [aws_security_group.web_sg]
 
   tags = {
