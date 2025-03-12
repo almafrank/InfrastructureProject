@@ -20,7 +20,7 @@ resource "aws_key_pair" "deployer_key" {
 # Skapa en EC2-instans
 resource "aws_instance" "webserver" {
   key_name        = aws_key_pair.deployer_key.key_name
-
+  count         = var.instance_count 
   vpc_security_group_ids = [aws_security_group.web_sg]
 
   tags = {
