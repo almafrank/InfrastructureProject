@@ -26,7 +26,7 @@ variable "instance_count" {
 variable "key_name" {
   description = "SSH Key Pair för EC2-instansen"
   type        = string
-  default     = "tofu-key"
+  default     = "openTofu_key"
 }
 
 variable "public_key_path" {
