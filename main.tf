@@ -58,3 +58,8 @@ resource "aws_route_table" "test-route-table-public" {
   }
 }
 
+resource "aws_route_table_association" "public_assoc" {
+  subnet_id      = aws_subnet.subnet-1-public.id
+  route_table_id = aws_route_table.test-route-table-public.id
+}
+
