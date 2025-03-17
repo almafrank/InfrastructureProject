@@ -33,6 +33,9 @@ resource "aws_subnet" "subnet-1-public"{
 #2.Create Internet gateway
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.TestVPC.id
+  tags = {
+    Name = "Test InternetGataway"
+  }
 
 }
 
