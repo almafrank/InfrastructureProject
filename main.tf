@@ -204,6 +204,6 @@ resource "aws_instance" "private_Ec2_instance" {
   associate_public_ip_address = true
 
   tags = {
-    Name = "Public Webserver 1"
+    Name = "Private Databse Server"
   }
 }
