@@ -110,3 +110,37 @@ resource "aws_security_group" "public_ec2_security_group" {
   }
 }
 
+resource "aws_instance" "public_Ec2_instance2" {
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  subnet_id     = aws_subnet.subnet-1-public.id
+  key_name      = var.key_name
+  vpc_security_group_ids = [aws_security_group.public_ec2_security_group2.id]
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "Public Webserver 2"
+  }
+}
+
+#
+resource "aws_security_group" "public_ec2_security_group2" {
+  name        = "public_ec2_security_group2"
+  vpc_id      = aws_vpc.TestVPC.id
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.trusted_ips_for_ssh
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  # Tillåter all trafik ut från EC2-instansen
+  }
+}
+
