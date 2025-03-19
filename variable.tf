@@ -47,3 +47,5 @@ variable "restrict_ips_for_http" {
   default     = []  # Tom lista betyder att ALLA IP-adresser har HTTP access
 }
 
+
+

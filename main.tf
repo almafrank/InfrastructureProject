@@ -53,7 +53,7 @@ resource "aws_route_table" "test-route-table-public" {
     Name = "Test Route table public"
   }
 }
-
+#Assoication
 resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.subnet-1-public.id
   route_table_id = aws_route_table.test-route-table-public.id
@@ -115,7 +115,7 @@ resource "aws_instance" "public_Ec2_instance2" {
   instance_type = var.instance_type
   subnet_id     = aws_subnet.subnet-1-public.id
   key_name      = var.key_name
-  vpc_security_group_ids = [aws_security_group.public_ec2_security_group2.id]
+  vpc_security_group_ids = [aws_security_group.public_ec2_security_group.id]
   associate_public_ip_address = true
 
   tags = {
