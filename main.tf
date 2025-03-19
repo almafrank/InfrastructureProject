@@ -170,7 +170,7 @@ resource "aws_route_table" "private_route_table" {
 
 #declare vpc for nat gateway
 resource "aws_eip" "nat" {
-  domain = "TestVPC"
+  domain = "vpc"
 }
 #nat gateway
 resource "aws_nat_gateway" "nat" {
