@@ -58,4 +58,57 @@ resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.subnet-1-public.id
   route_table_id = aws_route_table.test-route-table-public.id
 }
+data "http" "my_ip" {
+  url = "https://ifconfig.me/"
+}
+
+#data "aws_ami" "amazon_linux" {
+#  most_recent = true
+#  owners      = ["amazon"]
+#  filter {
+#    name   = "name"
+#    values = ["al2023-ami-*"]
+#  }
+#}
+
+# Skapa en nyckelpar i AWS baserat på en existerande nyckel (för SSH)
+resource "aws_key_pair" "deployer_key" {
+  key_name   = var.key_name
+  public_key = file(var.public_key_path)
+}
+
+#
+resource "aws_instance" "public_Ec2_instance" {
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  subnet_id     = aws_subnet.subnet-1-public.id
+  key_name      = var.key_name
+  vpc_security_group_ids = [aws_security_group.public_ec2_security_group.id]
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "Public Webserver 1"
+  }
+}
+
+#
+resource "aws_security_group" "public_ec2_security_group" {
+  name        = "public_ec2_security_group"
+  vpc_id      = aws_vpc.TestVPC.id
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.trusted_ips_for_ssh
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  # Tillåter all trafik ut från EC2-instansen
+  }
+}
 
