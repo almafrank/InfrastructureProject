@@ -38,7 +38,7 @@ variable "public_key_path" {
 variable "trusted_ips_for_ssh" {
   description = "Lista av IP-adresser som släpps in till SSH (glöm inte /32)"
   type        = list(string)
-  default     = [chomp(data.http.my_ip.response_body) + "/32"]  
+  default     = []  
 }
 
 variable "restrict_ips_for_http" {
