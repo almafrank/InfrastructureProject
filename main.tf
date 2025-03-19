@@ -90,16 +90,16 @@ resource "aws_instance" "public_Ec2_instance" {
 }
 
 #
-resource "aws_security_group" "public_ec2_security_group" {
-  name        = "public_ec2_security_group"
+resource "aws_security_group" "private_ec2_security_group" {
+  name        = "private_ec2_security_group"
   vpc_id      = aws_vpc.TestVPC.id
 
   ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
+    description = "Allow PostgreSQL from public EC2 instances"
+    from_port   = 3306
+    to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = var.trusted_ips_for_ssh
+    cidr_blocks =  [aws_security_group.public_ec2_security_group.id]
   }
 
   egress {
@@ -124,23 +124,33 @@ resource "aws_instance" "public_Ec2_instance2" {
 }
 
 #
-resource "aws_security_group" "public_ec2_security_group2" {
-  name        = "public_ec2_security_group2"
+resource "aws_security_group" "public_ec2_security_group" {
+  name        = "public_ec2_security_group"
   vpc_id      = aws_vpc.TestVPC.id
 
   ingress {
+    description = "HTTP"
+    from_port = 80
+    to_port = 80
+    protocol = "tcp"
+    cidr_blocks = var.restrict_ips_for_http
+  }
+  ingress {
     description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
     cidr_blocks = var.trusted_ips_for_ssh
   }
-
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]  # Tillåter all trafik ut från EC2-instansen
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  } 
+
+    tags = {
+    Name = "allow_web"
   }
 }
 
@@ -183,4 +193,17 @@ resource "aws_nat_gateway" "nat" {
 resource "aws_route_table_association" "private_assoc" {
   subnet_id      = aws_subnet.subnet-2-private.id
   route_table_id = aws_route_table.private_route_table.id
+}
+
+resource "aws_instance" "private_Ec2_instance" {
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  subnet_id     = aws_subnet.subnet-2-private.id
+  key_name      = var.key_name
+  vpc_security_group_ids = [aws_security_group.public_ec2_security_group.id]
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "Public Webserver 1"
+  }
 }
