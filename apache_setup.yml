@@ -1,7 +1,7 @@
 ---
 - name: Installera och konfigurera Apache
   hosts: webserver
-  become: true
+  become: true #använd sudo för att köra kommandon
   tasks:
 
     - name: Installera Apache
