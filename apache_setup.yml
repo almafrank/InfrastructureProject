@@ -1,0 +1,35 @@
+---
+- name: Installera och konfigurera Apache
+  hosts: webserver
+  
+  tasks:
+
+    - name: Installera Apache
+      ansible.builtin.dnf:
+        name: httpd
+        state: present
+
+    - name: Kopiera index.html till webbservern
+      ansible.builtin.copy:
+        src: index.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Starta och aktivera Apache vid uppstart
+      ansible.builtin.service:
+        name: httpd
+        state: started
+
+    - name: Kontrollera att Apache körs
+      ansible.builtin.command: systemctl is-active httpd
+      register: apache_status
+      changed_when: false
+      failed_when: "'active' not in apache_status.stdout"
+
+    - name: Kontrollera att webbsidan svarar
+      ansible.builtin.uri:
+        url: http://localhost
+        status_code: 200
+      register: web_response
