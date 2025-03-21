@@ -1,7 +1,7 @@
 ---
 - name: Installera och konfigurera Apache
   hosts: webserver
-  
+  become: true
   tasks:
 
     - name: Installera Apache
