@@ -1,2 +1,2 @@
-public_key_path = "~/.ssh/InfraProj-cloudshell-key.pub"
-trusted_ips_for_ssh = ["98.83.28.43/32"]
+public_key_path = "~/.ssh/InfraProj-InfraProj-cocloudshell-key.pub"
+trusted_ips_for_ssh = ["18.215.176.198/32"]
