@@ -96,8 +96,8 @@ resource "aws_security_group" "private_ec2_security_group" {
 
   ingress {
     description = "Allow PostgreSQL from public EC2 instances"
-    from_port   = 3306
-    to_port     = 3306
+    from_port   = 5432
+    to_port     = 5432
     protocol    = "tcp"
     security_groups =  [aws_security_group.public_ec2_security_group.id]
   }
