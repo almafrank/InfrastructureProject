@@ -1,0 +1,28 @@
+---
+- name: Install and start Python on Amazon Linux 2023
+  hosts: webserver
+  become: yes
+
+  tasks:
+    - name: Install Python from default repo
+      ansible.builtin.dnf:
+        name: python3
+        state: latest
+
+    - name: Pip installation
+      ansible.builtin.dnf:
+        name: python3-pip
+        state: present
+       
+
+    - name: Verify python version
+      ansible.builtin.command: python3 --version
+        name: "{{ ansible_user }}"
+        register: python_version
+        changed_when: false
+        
+
+    - name: Show python version
+      ansible.builtin.debug:
+       var: python_version.stdout
+     
