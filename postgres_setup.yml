@@ -1,0 +1,43 @@
+---
+- name: Install and start PostgreSQL on private EC2
+  hosts: dbserver
+  become: yes
+
+  tasks:
+    - name: Install PostgreSQL server
+      ansible.builtin.dnf:
+        name: postgresql-server
+        state: latest
+
+    - name: Install PostgreSQL client tools
+      ansible.builtin.dnf:
+        name: postgresql
+        state: present
+
+    - name: Initialize PostgreSQL database
+      ansible.builtin.command: postgresql-setup --initdb
+      args:
+        creates: /var/lib/pgsql/data/PG_VERSION
+
+    - name: Start and enable PostgreSQL service
+      ansible.builtin.service:
+        name: postgresql
+        state: started
+        enabled: true
+
+    - name: Allow password authentication (in pg_hba.conf)
+      ansible.builtin.lineinfile:
+        path: /var/lib/pgsql/data/pg_hba.conf
+        regexp: '^host\s+all\s+all\s+127.0.0.1/32\s+ident'
+        line: 'host    all             all             0.0.0.0/0               md5'
+
+    - name: Allow connections from public servers (in postgresql.conf)
+      ansible.builtin.lineinfile:
+        path: /var/lib/pgsql/data/postgresql.conf
+        regexp: '^#?listen_addresses ='
+        line: "listen_addresses = '*'"
+
+    - name: Restart PostgreSQL to apply config
+      ansible.builtin.service:
+        name: postgresql
+        state: restarted
