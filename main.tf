@@ -252,13 +252,13 @@ resource "aws_lb_target_group" "alb_tg" {
 
 resource "aws_lb_target_group_attachment" "tg_attach_1" {
   target_group_arn = aws_lb_target_group.alb_tg.arn
-  target_id        = aws_instance.public_server_1.id
+  target_id        = aws_instance.public_Ec2_instance.id
   port            = 80
 }
 
 resource "aws_lb_target_group_attachment" "tg_attach_2" {
   target_group_arn = aws_lb_target_group.alb_tg.arn
-  target_id        = aws_instance.public_server_2.id
+  target_id        = aws_instance.public_Ec2_instance2.id
   port            = 80
 }
 
