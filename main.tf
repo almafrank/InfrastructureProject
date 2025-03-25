@@ -110,13 +110,6 @@ resource "aws_security_group" "private_ec2_security_group" {
     security_groups = [aws_security_group.public_ec2_security_group.id]
   }
 
-ingress {
-    description     = "Allow SSH from public EC2s"
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    cidr_blocks     = var.trusted_ips_for_ssh
-  }
 
   egress {
     from_port   = 0
