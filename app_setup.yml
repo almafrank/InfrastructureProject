@@ -1,0 +1,21 @@
+---
+- name: copy app.py to webservers
+  hosts: webserver
+  become: yes
+
+  tasks:
+    - name: Ensure /home/ec2-user/app directory exists
+      file:
+        path: /home/ec2-user/app
+        state: directory
+        owner: ec2-user
+        group: ec2-user
+        mode: '0755'
+
+    - name: Copy app.py to the web server
+      copy:
+        src: app.py
+        dest: /home/ec2-user/app/app.py
+        owner: ec2-user
+        group: ec2-user
+        mode: '0644'
