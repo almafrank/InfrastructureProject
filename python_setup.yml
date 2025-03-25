@@ -20,24 +20,24 @@
       register: python_version
       changed_when: false
 
-- name: Show python version
-  ansible.builtin.debug:
-    var: python_version.stdout
+    - name: Show python version
+      ansible.builtin.debug:
+        var: python_version.stdout
 
-- name: Install Flask
-  ansible.builtin.pip:
-    name: Flask
-    state: present
+    - name: Install Flask
+      ansible.builtin.pip:
+        name: Flask
+        state: present
 
-- name: Verify Flask installation
-  ansible.builtin.command: python3 -c "import flask; print(flask.__version__)"
-  register: flask_version
+    - name: Verify Flask installation
+      ansible.builtin.command: python3 -c "import flask; print(flask.__version__)"
+      register: flask_version
 
-- name: Show Flask version
-  ansible.builtin.debug:
-    var: flask_version.stdout
+    - name: Show Flask version
+      ansible.builtin.debug:
+        var: flask_version.stdout
 
-- name: Install psycopg2
-  ansible.builtin.pip:
-    name: psycopg2
-    state: present
+    - name: Install psycopg2
+      ansible.builtin.pip:
+        name: psycopg2
+        state: present
