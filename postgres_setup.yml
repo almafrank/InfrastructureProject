@@ -3,17 +3,17 @@
   hosts: dbserver
   become: yes
 
+  pre_tasks:
+    - name: Update dnf cache
+      dnf:
+        update_cache: yes
+        
+    - name: "Install packages"
+      dnf: "name={{ item }} state=present"
+      with_items:
+        - postgresql16
+        - postgresql16-server
   tasks:
-    - name: Install PostgreSQL server
-      ansible.builtin.dnf:
-        name: postgresql-server
-        state: latest
-
-    - name: Install PostgreSQL client tools
-      ansible.builtin.dnf:
-        name: postgresql
-        state: present
-
     - name: Initialize PostgreSQL database
       ansible.builtin.command: postgresql-setup --initdb
       args:

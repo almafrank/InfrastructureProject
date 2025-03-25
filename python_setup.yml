@@ -16,9 +16,10 @@
        
 
     - name: Verify python version
-      ansible.builtin.command: python3 --version
-      register: python_version
-      changed_when: false
+      ansible.builtin.command: 
+        cmd: python3 --version
+        register: python_version
+        changed_when: false
         
 
     - name: Show python version

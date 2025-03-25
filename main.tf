@@ -110,6 +110,14 @@ resource "aws_security_group" "private_ec2_security_group" {
     security_groups = [aws_security_group.public_ec2_security_group.id]
   }
 
+ingress {
+    description     = "Allow SSH from public EC2s"
+    from_port       = 22
+    to_port         = 22
+    protocol        = "tcp"
+    cidr_blocks     = var.trusted_ips_for_ssh
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -166,7 +174,7 @@ resource "aws_security_group" "public_ec2_security_group" {
 resource "aws_subnet" "subnet-2-private"{
     vpc_id = aws_vpc.TestVPC.id
     cidr_block = "10.0.2.0/24"
-    availability_zone = "us-east-1a"
+    availability_zone = "us-east-1b"
     tags = {
     Name = "SubNet 2 private"
   }
@@ -208,7 +216,7 @@ resource "aws_instance" "private_Ec2_instance" {
   instance_type = var.instance_type
   subnet_id     = aws_subnet.subnet-2-private.id
   key_name      = var.key_name
-  vpc_security_group_ids = [aws_security_group.public_ec2_security_group.id]
+  vpc_security_group_ids = [aws_security_group.private_ec2_security_group.id]
   associate_public_ip_address = true
 
   tags = {
