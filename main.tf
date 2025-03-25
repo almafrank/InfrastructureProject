@@ -142,7 +142,7 @@ resource "aws_security_group" "public_ec2_security_group" {
     from_port = 80
     to_port = 80
     protocol = "tcp"
-    cidr_blocks = var.restrict_ips_for_http
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     description = "SSH"
@@ -214,5 +214,61 @@ resource "aws_instance" "private_Ec2_instance" {
 
   tags = {
     Name = "Private Databse Server"
+  }
+}
+
+resource "aws_security_group" "alb_sg" {
+  vpc_id = aws_vpc.TestVPC.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_lb" "app_lb" {
+  name               = "app-load-balancer"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb_sg.id]
+  subnets           = [aws_subnet.subnet-1-public.id, aws_subnet.subnet-2-private.id]
+}
+
+resource "aws_lb_target_group" "alb_tg" {
+  name     = "alb-target-group"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.TestVPC.id
+}
+
+resource "aws_lb_target_group_attachment" "tg_attach_1" {
+  target_group_arn = aws_lb_target_group.alb_tg.arn
+  target_id        = aws_instance.public_server_1.id
+  port            = 80
+}
+
+resource "aws_lb_target_group_attachment" "tg_attach_2" {
+  target_group_arn = aws_lb_target_group.alb_tg.arn
+  target_id        = aws_instance.public_server_2.id
+  port            = 80
+}
+
+resource "aws_lb_listener" "http_listener" {
+  load_balancer_arn = aws_lb.app_lb.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.alb_tg.arn
   }
 }
