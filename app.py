@@ -4,7 +4,7 @@ import psycopg2
 
 app = Flask(__name__)
 
-DB_HOST = "127.0.0.1"
+#DB_HOST = "127.0.0.1"
 DB_NAME = None
 DB_USER = None
 DB_PASSWORD = None
@@ -15,12 +15,13 @@ def check_env_variables():
     """Kontrollerar att alla nödvändiga miljövariabler finns och hämtar deras värden."""
     global DB_NAME, DB_USER, DB_PASSWORD
 
-    required_env_vars = ["DB_NAME", "DB_USER", "DB_PASSWORD"]
+    required_env_vars = ["DB_HOST", "DB_NAME", "DB_USER", "DB_PASSWORD"]
     missing_vars = [var for var in required_env_vars if not os.getenv(var)]
 
     if missing_vars:
         return f"❌ Steg 1: Följande miljövariabler saknas: {', '.join(missing_vars)}", False
 
+    DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
     DB_NAME = os.getenv("DB_NAME")
     DB_USER = os.getenv("DB_USER")
     DB_PASSWORD = os.getenv("DB_PASSWORD")
