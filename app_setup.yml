@@ -24,7 +24,7 @@
       copy:
         dest: /etc/environment
         content: |
-            DB_HOST="10.0.2.63"
+            DB_HOST="PGDB_HOST_IP"
             DB_NAME="mydb"
             DB_USER="myuser"
             DB_PASSWORD="mypassword"
@@ -33,8 +33,13 @@
 
     - name: Run Flask app with environment variables
       shell: |
-        nohup env DB_HOST="10.0.2.63" DB_NAME="mydb" DB_USER="myuser" DB_PASSWORD="mypassword" \
-        python3 /home/ec2-user/app/app.py > /home/ec2-user/app/output.log 2>&1 &
+        nohup python3 /home/ec2-user/app/app.py > /home/ec2-user/app/output.log 2>&1 &
       args:
         chdir: /home/ec2-user/app
+      environment:
+        DB_HOST: PGDB_HOST_IP
+        DB_NAME: mydb
+        DB_USER: myuser
+        DB_PASSWORD: mypassword
+
 

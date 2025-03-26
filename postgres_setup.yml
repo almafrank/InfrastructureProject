@@ -25,6 +25,22 @@
         state: started
         enabled: true
 
+    - name: Create PostgreSQL user
+      ansible.builtin.shell: |
+        psql -c "CREATE USER myuser WITH PASSWORD 'mypassword';"
+      become: yes
+      become_user: postgres
+      args:
+        executable: /bin/bash
+
+    - name: Create PostgreSQL database
+      ansible.builtin.shell: |
+        psql -c "CREATE DATABASE mydb OWNER myuser;"
+      become: yes
+      become_user: postgres
+      args:
+        executable: /bin/bash
+
     - name: Allow password authentication (in pg_hba.conf)
       ansible.builtin.lineinfile:
         path: /var/lib/pgsql/data/pg_hba.conf

@@ -61,6 +61,8 @@ sed -i "s/\(ec2-web2 ansible_host=\)[0-9.]\+/\1$WEB2_PUBLIC_IP/" "$INVENTORY_FIL
 sed -i "s/\(ec2-database ansible_host=\)[0-9.]\+/\1$DB_PRIVATE_IP/" "$INVENTORY_FILE"
 sed -i "s/\(ansible_ssh_common_args='-o ProxyJump=ec2-user@\)[0-9.]\+/\1$WEB1_PUBLIC_IP/" "$INVENTORY_FILE"
 
+sed -i -e "s/PGDB_HOST_IP/$DB_PRIVATE_IP/g" app_setup.yml
+
 echo "Ansible inventory file updated successfully!"
 
 export ANSIBLE_HOST_KEY_CHECKING=False
