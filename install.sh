@@ -22,7 +22,8 @@ else
     echo "🔑 SSH key already exists at $SSH_KEY_PATH"
 fi
 
-
+eval $(ssh-agent)
+ssh-add ~/.ssh/InfraProj-cocloudshell-key
 
 #Correct trusted ips for ssh connection
 my_ip=$(curl -s ifconfig.me)
