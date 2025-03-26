@@ -4,7 +4,7 @@ import psycopg2
 
 app = Flask(__name__)
 
-#DB_HOST = "127.0.0.1"
+DB_HOST = None
 DB_NAME = None
 DB_USER = None
 DB_PASSWORD = None
