@@ -62,6 +62,8 @@ sed -i "s/\(ansible_ssh_common_args='-o ProxyJump=ec2-user@\)[0-9.]\+/\1$WEB1_PU
 
 echo "Ansible inventory file updated successfully!"
 
-ansible-playbook -i inventory python_setup.yml -auto-approve
-ansible-playbook -i inventory postgres_setup.yml -auto-approve
-ansible-playbook -i inventory app_setup.yml -auto-approve
+export ANSIBLE_HOST_KEY_CHECKING=False
+
+ansible-playbook -i inventory python_setup.yml
+ansible-playbook -i inventory postgres_setup.yml
+ansible-playbook -i inventory app_setup.yml
