@@ -32,7 +32,7 @@ if [[ -z "$my_ip" ]]; then
     exit 1
 fi
 
-sed -i "2s/.*/trusted_ips_for_ssh = [\"$my_ip\"]/" inventory
+sed -i "2s/.*/trusted_ips_for_ssh = [\"$my_ip\"]/" terraform.tfvars
 
 #Apply tofu
 tofu apply -auto-approve
