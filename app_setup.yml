@@ -20,7 +20,18 @@
         group: ec2-user
         mode: '0644'
 
-    - name: Run the Flask app with nohup
-      shell: nohup python3 /home/ec2-user/app/app.py &
+    - name: Set environment variables for app
+      copy:
+        dest: /etc/environment
+        content: |
+          DB_HOST=10.0.2.63
+          DB_NAME=mydb
+          DB_USER=myuser
+          DB_PASSWORD=mypassword
+      mode: '0644'
+
+
+    - name: Run Flask app with env vars
+      shell: . /etc/environment && nohup python3 /home/ec2-user/app/app.py > /home/ec2-user/app/output.log 2>&1 &
       args:
         chdir: /home/ec2-user/app
