@@ -33,7 +33,7 @@
 
     - name: Run Flask app with environment variables
       shell: |
-        nohup env DB_HOST=10.0.2.63 DB_NAME=mydb DB_USER=myuser DB_PASSWORD=mypassword \
+        nohup env DB_HOST="10.0.2.63" DB_NAME="mydb" DB_USER="myuser" DB_PASSWORD="mypassword" \
         python3 /home/ec2-user/app/app.py > /home/ec2-user/app/output.log 2>&1 &
       args:
         chdir: /home/ec2-user/app
