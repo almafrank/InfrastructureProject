@@ -24,11 +24,11 @@
       copy:
         dest: /etc/environment
         content: |
-          DB_HOST=10.0.2.63
-          DB_NAME=mydb
-          DB_USER=myuser
-          DB_PASSWORD=mypassword
-      mode: '0644'
+            DB_HOST=10.0.2.63
+            DB_NAME=mydb
+            DB_USER=myuser
+            DB_PASSWORD=mypassword
+        mode: '0644'
 
 
     - name: Run Flask app with env vars
