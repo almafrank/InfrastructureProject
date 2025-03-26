@@ -31,7 +31,12 @@
         mode: '0644'
 
 
-    - name: Run Flask app with env vars
-      shell: . /etc/environment && nohup python3 /home/ec2-user/app/app.py > /home/ec2-user/app/output.log 2>&1 &
+    - name: Run Flask app with environment variables
+      shell: |
+        export DB_HOST=10.0.2.63
+        export DB_NAME=mydb
+        export DB_USER=myuser
+        export DB_PASSWORD=mypassword
+        nohup python3 /home/ec2-user/app/app.py > /home/ec2-user/app/output.log 2>&1 &
       args:
         chdir: /home/ec2-user/app
