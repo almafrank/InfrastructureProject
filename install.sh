@@ -53,7 +53,7 @@ if [[ -z "$WEB1_PUBLIC_IP" || -z "$WEB2_PUBLIC_IP" || -z "$DB_PRIVATE_IP" ]]; th
     exit 1
 fi
 
-INVENTORY_FILE="inventory.ini"
+INVENTORY_FILE="inventory"
 
 sed -i "s/\(ec2-web1 ansible_host=\)[0-9.]\+/\1$WEB1_PUBLIC_IP/" "$INVENTORY_FILE"
 sed -i "s/\(ec2-web2 ansible_host=\)[0-9.]\+/\1$WEB2_PUBLIC_IP/" "$INVENTORY_FILE"
