@@ -11,7 +11,7 @@ rm install-opentofu.sh
 
 tofu init
 
-SSH_KEY_PATH="$HOME/.ssh/InfraProj-cloudshell-key" # ÄNDRA BEROENDE PÅ VAD DEN SKA HETA LOL
+SSH_KEY_PATH="$HOME/.ssh/InfraProj-cocloudshell-key" # ÄNDRA BEROENDE PÅ VAD DEN SKA HETA LOL
 
 if [[ ! -f "$SSH_KEY_PATH" ]]; then
     echo "🔑 Generating a new SSH key pair..."
