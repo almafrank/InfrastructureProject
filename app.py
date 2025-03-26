@@ -1,112 +1,98 @@
+from flask import Flask, request
 import os
-from flask import Flask
 import psycopg2
+from datetime import datetime
+import socket
+import logging
 
 app = Flask(__name__)
 
-DB_HOST = None
-DB_NAME = None
-DB_USER = None
-DB_PASSWORD = None
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-
-# Steg 1: Kontrollera miljövariabler
-def check_env_variables():
-    """Kontrollerar att alla nödvändiga miljövariabler finns och hämtar deras värden."""
-    global DB_NAME, DB_USER, DB_PASSWORD
-
-    required_env_vars = ["DB_HOST", "DB_NAME", "DB_USER", "DB_PASSWORD"]
-    missing_vars = [var for var in required_env_vars if not os.getenv(var)]
-
-    if missing_vars:
-        return f"❌ Steg 1: Följande miljövariabler saknas: {', '.join(missing_vars)}", False
-
-    DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
-    DB_NAME = os.getenv("DB_NAME")
-    DB_USER = os.getenv("DB_USER")
-    DB_PASSWORD = os.getenv("DB_PASSWORD")
-
-    return "✅ Steg 1: Alla miljövariabler är korrekt inställda!", True
-
-
-# Steg 2: Testa anslutning till databasen
-def check_db_connection():
-    """Kontrollerar om Flask kan ansluta till databasen."""
-    conn = get_db_connection()
-    if isinstance(conn, str):
-        return f"❌ Steg 2: Databasanslutning misslyckades: {conn}", False
-    conn.close()
-    return "✅ Steg 2: Flask kan ansluta till databasen!", True
-
-
-# Steg 3: Hämta data från databasen
-def fetch_user_from_db():
-    """Försöker hämta en användare från databasen."""
-    result, success = execute_db_query('SELECT name FROM users LIMIT 1;', fetch_one=True)
-    
-    if not success:
-        return "❌ Steg 3: Ingen användare hittades i databasen!", False
-    if result:
-        return f"✅ Steg 3: Flask kan hämta data från databasen! (Användare: {result[0]})", True
-    return "❌ Steg 3: Ingen användare hittades i databasen!", False
-
-
-# Databasanslutning
 def get_db_connection():
-    """Försöker ansluta till PostgreSQL och returnerar anslutningen eller ett felmeddelande."""
     try:
-        return psycopg2.connect(
-            host=DB_HOST,
-            database=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD
+        conn = psycopg2.connect(
+            dbname=os.getenv('DB_NAME', 'postgres'),
+            user=os.getenv('DB_USER', 'postgres'),
+            password=os.getenv('DB_PASSWORD', 'password'),
+            host=os.getenv('DB_HOST', 'localhost'),
+            port=os.getenv('DB_PORT', '5432')
         )
+        return conn
     except Exception as e:
-        return str(e)
+        logger.error(f"Database connection failed: {e}")
+        return None
 
-# Generisk funktion för att köra databasfrågor
-def execute_db_query(query, fetch_one=False):
-    """Kör en SQL-fråga och returnerar resultatet eller ett felmeddelande."""
+def init_db():
     conn = get_db_connection()
-
-    if isinstance(conn, str):
-        return f"❌ Databasanslutning misslyckades: {conn}", False
-
+    if conn is None:
+        return
     try:
-        cur = conn.cursor()
-        cur.execute(query)
-        result = cur.fetchone() if fetch_one else None
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS visitors (
+                id SERIAL PRIMARY KEY,
+                name TEXT,
+                timestamp TIMESTAMP,
+                instance_name TEXT
+            )
+        ''')
         conn.commit()
-        cur.close()
+        cursor.close()
         conn.close()
-        return result, True
     except Exception as e:
-        return f"❌ Fel vid databasfråga: {e}", False
+        logger.error(f"Database initialization failed: {e}")
 
-
-
-# Route: Flask-appen själv (ska visa "Hej Kalle!" alternativt status om de olika stegen)
 @app.route('/')
 def home():
-    """Visar status för alla steg och om allt fungerar, hämtar och visar användaren från databasen."""
-    steps = [
-        check_env_variables(),
-        check_db_connection(),
-        fetch_user_from_db()
-    ]
+    instance_name = os.getenv('INSTANCE_NAME', 'unknown')
+    ip_address = request.remote_addr
+    user_agent = request.headers.get('User-Agent')
+    
+    conn = get_db_connection()
+    if conn is None:
+        return "Database connection error", 500
+    
+    try:
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO visitors (name, timestamp, instance_name) VALUES (%s, %s, %s) RETURNING id", 
+                       ('Guest', datetime.utcnow(), instance_name))
+        visit_id = cursor.fetchone()[0]
+        conn.commit()
+        cursor.execute("SELECT COUNT(*) FROM visitors")
+        visit_count = cursor.fetchone()[0]
+        cursor.close()
+        conn.close()
+        
+        logger.info(f"New visit logged: ID={visit_id}, Instance={instance_name}, IP={ip_address}, User-Agent={user_agent}")
+        
+        return f"Entry ID: {visit_count}"
+    except Exception as e:
+        logger.error(f"Database write/read error: {e}")
+        return "Database error", 500
 
-    status_messages = [message for message, _ in steps]
-    failed_steps = [message for message, success in steps if not success]
+@app.route('/<int:entry_id>')
+def get_entry(entry_id):
+    conn = get_db_connection()
+    if conn is None:
+        return "Database connection error", 500
+    
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM visitors WHERE id = %s", (entry_id,))
+        entry = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        if entry:
+            return f"Entry ID: {entry[0]}, Name: {entry[1]}, Timestamp: {entry[2]}, Instance: {entry[3]}"
+        else:
+            return "Entry not found", 404
+    except Exception as e:
+        logger.error(f"Database read error: {e}")
+        return "Database error", 500
 
-    # Om något steg misslyckas, skriv ut alla stegs status och markera fel.
-    if failed_steps:
-        return "<br>".join(status_messages), 500
-
-    # Om allt fungerar, hämta användarnamnet och visa välkomstmeddelande
-    user_name = steps[-1][0].split(': ')[-1]  # Extrahera användarnamnet från sista steget
-    return f"<h1>Hej, {user_name}!</h1><br>" + "<br>".join(status_messages)
-
-
-# Start av Flask-applikationen
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    init_db()
+    app.run(host='0.0.0.0', port=5000, debug=True)
