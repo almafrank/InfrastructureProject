@@ -58,6 +58,7 @@ Our team has been hired as consultants to design and deliver a scalable infrastr
 ```
 6. **Run the script**
 ```sh
+   chmod +x install.sh
     ./install.sh
 ```
 🔧 **What the Script Does**
