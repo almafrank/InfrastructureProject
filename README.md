@@ -6,7 +6,7 @@ This project implements a fully automated cloud-based infrastructure using **Ope
 
 ## 🔍 Project Background
 
-Your team has been hired as consultants to design and deliver a scalable infrastructure for a client’s web service. The client expects a secure solution deployed and maintained via automation.
+Our team has been hired as consultants to design and deliver a scalable infrastructure for a client’s web service. The client expects a secure solution deployed and maintained via automation.
 
 ---
 
