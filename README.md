@@ -80,14 +80,13 @@ Once the script finishes and the app is deployed, open:
 
 ```txt
     InfrastructureProject/
-    ├── .trunk/
     ├── Ansible/
+    │   ├── app_setup.yml
+    │   ├── inventory
+    │   ├── postgres_setup.yml
+    │   ├── python_setup.yml
     │   └── files/
-    │       ├── app.py
-    │       ├── app_setup.yml
-    │       ├── inventory
-    │       ├── postgres_setup.yml
-    │       └── python_setup.yml
+    │       └── app.py
     ├── OpenTofu/
     │   ├── main.tf
     │   ├── output.tf
