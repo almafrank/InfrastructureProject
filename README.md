@@ -62,33 +62,13 @@ Your team has been hired as consultants to design and deliver a scalable infrast
 🔧 What the Script Does
 The install.sh script automates:
 
-Installing OpenTofu and running:
-
-tofu init
-tofu apply -auto-approve
-Generating or using an existing SSH key:
-
-ssh-keygen -t rsa -b 4096 -C "aws-instance" -f ~/.ssh/InfraProj-cocloudshell-key -N ""
-Updating terraform.tfvars with your current IP:
-
-curl -s ifconfig.me
-Updating Ansible inventory using Terraform outputs:
-
-tofu output -raw public_Ec2_instance_public_ip
-tofu output -raw public_Ec2_instance2_public_ip
-tofu output -raw private_Ec2_instance_private_ip
-Replacing IPs in the inventory and playbooks:
-
-sed -i ...
-Installing Ansible:
-
-sudo dnf update -y
-sudo dnf install -y ansible
-Running playbooks to configure servers:
-
-ansible-playbook -i inventory python_setup.yml
-ansible-playbook -i inventory postgres_setup.yml
-ansible-playbook -i inventory app_setup.yml
+- Installing OpenTofu and running
+- Generating or using an existing SSH key
+- Updating terraform.tfvars with your current IP
+- Updating Ansible inventory using Terraform outputs
+- Replacing IPs in the inventory and playbooks
+- Installing Ansible
+- Running playbooks to configure servers
 
 9. Accessing the Application
 Once the script finishes and the app is deployed, open:
