@@ -1,0 +1,59 @@
+---
+- name: Install and start PostgreSQL on private EC2
+  hosts: dbserver
+  become: yes
+
+  pre_tasks:
+    - name: Update dnf cache
+      dnf:
+        update_cache: yes
+        
+    - name: "Install packages"
+      dnf: "name={{ item }} state=present"
+      with_items:
+        - postgresql16
+        - postgresql16-server
+  tasks:
+    - name: Initialize PostgreSQL database
+      ansible.builtin.command: postgresql-setup --initdb
+      args:
+        creates: /var/lib/pgsql/data/PG_VERSION
+
+    - name: Start and enable PostgreSQL service
+      ansible.builtin.service:
+        name: postgresql
+        state: started
+        enabled: true
+
+    - name: Create PostgreSQL user
+      ansible.builtin.shell: |
+        psql -c "CREATE USER myuser WITH PASSWORD 'mypassword';"
+      become: yes
+      become_user: postgres
+      args:
+        executable: /bin/bash
+
+    - name: Create PostgreSQL database
+      ansible.builtin.shell: |
+        psql -c "CREATE DATABASE mydb OWNER myuser;"
+      become: yes
+      become_user: postgres
+      args:
+        executable: /bin/bash
+
+    - name: Allow password authentication (in pg_hba.conf)
+      ansible.builtin.lineinfile:
+        path: /var/lib/pgsql/data/pg_hba.conf
+        regexp: '^host\s+all\s+all\s+127.0.0.1/32\s+ident'
+        line: 'host    all             all             0.0.0.0/0               md5'
+
+    - name: Allow connections from public servers (in postgresql.conf)
+      ansible.builtin.lineinfile:
+        path: /var/lib/pgsql/data/postgresql.conf
+        regexp: '^#?listen_addresses ='
+        line: "listen_addresses = '*'"
+
+    - name: Restart PostgreSQL to apply config
+      ansible.builtin.service:
+        name: postgresql
+        state: restarted

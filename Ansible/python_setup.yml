@@ -1,0 +1,43 @@
+---
+- name: Install and start Python on Amazon Linux 2023
+  hosts: webserver
+  become: yes
+
+  tasks:
+    - name: Install Python from default repo
+      ansible.builtin.dnf:
+        name: python3
+        state: latest
+
+    - name: Pip installation
+      ansible.builtin.dnf:
+        name: python3-pip
+        state: present
+       
+
+    - name: Verify python version
+      ansible.builtin.command: python3 --version
+      register: python_version
+      changed_when: false
+
+    - name: Show python version
+      ansible.builtin.debug:
+        var: python_version.stdout
+
+    - name: Install Flask
+      ansible.builtin.pip:
+        name: Flask
+        state: present
+
+    - name: Verify Flask installation
+      ansible.builtin.command: python3 -c "import flask; print(flask.__version__)"
+      register: flask_version
+
+    - name: Show Flask version
+      ansible.builtin.debug:
+        var: flask_version.stdout
+
+    - name: Install psycopg2
+      ansible.builtin.pip:
+        name: psycopg2-binary
+        state: present
