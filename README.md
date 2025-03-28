@@ -72,10 +72,8 @@ The install.sh script automates:
 - Running playbooks to configure servers
 
 7. **Accessing the Application**
-Once the script finishes and the app is deployed, open:
-```sh
-    http://<EC2_PUBLIC_IP>:5000/
-```
+Once the script finishes and the app is deployed, open EC2 in AWS -> Load Balancers -> Copy Load Balancer DNS adress -> Open in web browser:
+
 📁 Project Structure
 
 ```txt
