@@ -1,18 +1,20 @@
 #!/bin/bash
 
-# CLoudShell saves the files you have created but not installed packages and software
+# CloudShell saves the files you have created but not installed packages and software
 # so you may need to run this after being inactive on CloudShell
 
-#Install tofu
-cd OpenTofu
+# Install tofu
 curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh
 chmod +x install-opentofu.sh
 ./install-opentofu.sh --install-method standalone --skip-verify
 rm install-opentofu.sh
 
+# Move to OpenTofu directory
+cd OpenTofu || exit 1
+
 tofu init
 
-SSH_KEY_PATH="$HOME/.ssh/InfraProj-cocloudshell-key" # ÄNDRA BEROENDE PÅ VAD DEN SKA HETA LOL
+SSH_KEY_PATH="$HOME/.ssh/InfraProj-cocloudshell-key"
 
 if [[ ! -f "$SSH_KEY_PATH" ]]; then
     echo "🔑 Generating a new SSH key pair..."
@@ -24,9 +26,9 @@ else
 fi
 
 eval $(ssh-agent)
-ssh-add ~/.ssh/InfraProj-cocloudshell-key
+ssh-add "$SSH_KEY_PATH"
 
-#Correct trusted ips for ssh connection
+# Correct trusted IPs for SSH connection
 my_ip=$(curl -s ifconfig.me)
 
 if [[ -z "$my_ip" ]]; then
@@ -36,19 +38,22 @@ fi
 
 sed -i "2s/.*/trusted_ips_for_ssh = [\"$my_ip\/32\"]/" terraform.tfvars
 
-#Apply tofu
+# Apply tofu
 tofu apply -auto-approve
 
-
-cd Ansible
-#Install Ansible
-sudo dnf update -y
-sudo dnf install -y ansible
-
-#Correct inventory ip 
+# Capture Terraform outputs
 WEB1_PUBLIC_IP=$(tofu output -raw public_Ec2_instance_public_ip 2>/dev/null)
 WEB2_PUBLIC_IP=$(tofu output -raw public_Ec2_instance2_public_ip 2>/dev/null)
 DB_PRIVATE_IP=$(tofu output -raw private_Ec2_instance_private_ip 2>/dev/null)
+
+cd ..
+
+# Install Ansible
+sudo dnf update -y
+sudo dnf install -y ansible
+
+# Correct inventory IPs
+cd Ansible || exit 1
 
 if [[ -z "$WEB1_PUBLIC_IP" || -z "$WEB2_PUBLIC_IP" || -z "$DB_PRIVATE_IP" ]]; then
     echo "Error: One or more Terraform outputs are empty. Ensure Terraform is initialized and state is accessible."
@@ -71,3 +76,7 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 ansible-playbook -i inventory python_setup.yml
 ansible-playbook -i inventory postgres_setup.yml
 ansible-playbook -i inventory app_setup.yml
+
+cd ..
+
+echo "Installation has been completed!"
