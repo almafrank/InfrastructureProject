@@ -80,18 +80,19 @@ Once the script finishes and the app is deployed, open:
 
 ```txt
     InfrastructureProject/
+    ├── .trunk/
     ├── Ansible/
-    │   ├── inventory
-    │   ├── python_setup.yml
-    │   ├── postgres_setup.yml
-    │   └── app_setup.yml
+    │   └── files/
+    │       ├── app.py
+    │       ├── app_setup.yml
+    │       ├── inventory
+    │       ├── postgres_setup.yml
+    │       └── python_setup.yml
     ├── OpenTofu/
     │   ├── main.tf
-    │   ├── variables.tf
-    │   ├── outputs.tf
-    │   └── terraform.tfvars
-    ├── Shell-Scripts/
-    │   └── install.sh
-    ├── app.py
+    │   ├── output.tf
+    │   ├── terraform.tfvars
+    │   └── variable.tf
+    ├── install.sh
     └── README.md
 ```
