@@ -4,6 +4,7 @@
 # so you may need to run this after being inactive on CloudShell
 
 #Install tofu
+cd OpenTofu
 curl --proto '=https' --tlsv1.2 -fsSL https://get.opentofu.org/install-opentofu.sh -o install-opentofu.sh
 chmod +x install-opentofu.sh
 ./install-opentofu.sh --install-method standalone --skip-verify
@@ -39,7 +40,7 @@ sed -i "2s/.*/trusted_ips_for_ssh = [\"$my_ip\/32\"]/" terraform.tfvars
 tofu apply -auto-approve
 
 
-
+cd Ansible
 #Install Ansible
 sudo dnf update -y
 sudo dnf install -y ansible
