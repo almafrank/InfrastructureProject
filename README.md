@@ -12,9 +12,9 @@ Your team has been hired as consultants to design and deliver a scalable infrast
 
 ## 🛠️ Tools Used
 
+- **AWS CloudShell** – Used to run everything directly in AWS
 - **OpenTofu** – Infrastructure as Code tool to provision AWS resources
 - **Ansible** – Configuration management and app deployment
-- **AWS CloudShell** – Used to run everything directly in AWS
 
 ---
 
@@ -23,7 +23,7 @@ Your team has been hired as consultants to design and deliver a scalable infrast
 ### ✅ Requirements
 
 - AWS account (with CloudShell access)
-- GitHub account (for SSH key setup)
+- GitHub account 
 
 ---
 
@@ -53,8 +53,8 @@ Your team has been hired as consultants to design and deliver a scalable infrast
 5. **Clone the repository using SSH**
 
 ```sh
-    git clone git@github.com:<your-username>/<your-repo>.git
-    cd <your-repo>
+    git clone git@github.com:almafrank/InfrastructureProject.git
+    cd InfrastructureProject
 ```
 6. **Run the script**
 ```sh
