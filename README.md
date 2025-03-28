@@ -40,6 +40,7 @@ Your team has been hired as consultants to design and deliver a scalable infrast
 
 ```sh
     cat ~/.ssh/InfraProj-cocloudshell-key.pub
+```
 5. Then go to GitHub → ⚙️ Settings → SSH and GPG keys → New SSH key and paste it.
 
 6. Start SSH agent and add your key:
@@ -47,15 +48,17 @@ Your team has been hired as consultants to design and deliver a scalable infrast
 ```sh
     eval $(ssh-agent -s)
     ssh-add ~/.ssh/InfraProj-cocloudshell-key
+```    
 7. Clone the repository using SSH:
 
 ```sh
     git clone git@github.com:<your-username>/<your-repo>.git
     cd <your-repo>
+```
 8. Run the script
 ```sh
     ./install.sh
-
+```
 🔧 What the Script Does
 The install.sh script automates:
 
@@ -91,7 +94,7 @@ ansible-playbook -i inventory app_setup.yml
 Once the script finishes and the app is deployed, open:
 ```sh
     http://<EC2_PUBLIC_IP>:5000/
-
+```
 📁 Project Structure
 
 ```txt
@@ -110,3 +113,4 @@ Once the script finishes and the app is deployed, open:
     │   └── install.sh
     ├── app.py
     └── README.md
+```
