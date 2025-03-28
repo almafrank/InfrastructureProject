@@ -34,32 +34,33 @@ Your team has been hired as consultants to design and deliver a scalable infrast
 2. **Create an SSH key** (if not already created):
    ```sh
    ssh-keygen -t rsa -b 4096 -C "aws-instance" -f ~/.ssh/InfraProj-cocloudshell-key -N ""
-3. Add the public key to GitHub
+3. **Add the public key to GitHub**
 
-4. View the key:
+- View the key:
 
 ```sh
     cat ~/.ssh/InfraProj-cocloudshell-key.pub
 ```
-5. Then go to GitHub → ⚙️ Settings → SSH and GPG keys → New SSH key and paste it.
+- Copy the key 
+- Then go to GitHub → ⚙️ Settings → SSH and GPG keys → New SSH key and paste it.
 
-6. Start SSH agent and add your key:
+4. **Start SSH agent and add your key**
 
 ```sh
     eval $(ssh-agent -s)
     ssh-add ~/.ssh/InfraProj-cocloudshell-key
 ```    
-7. Clone the repository using SSH:
+5. **Clone the repository using SSH**
 
 ```sh
     git clone git@github.com:<your-username>/<your-repo>.git
     cd <your-repo>
 ```
-8. Run the script
+6. **Run the script**
 ```sh
     ./install.sh
 ```
-🔧 What the Script Does
+🔧 **What the Script Does**
 The install.sh script automates:
 
 - Installing OpenTofu and running
@@ -70,7 +71,7 @@ The install.sh script automates:
 - Installing Ansible
 - Running playbooks to configure servers
 
-9. Accessing the Application
+7. **Accessing the Application**
 Once the script finishes and the app is deployed, open:
 ```sh
     http://<EC2_PUBLIC_IP>:5000/
