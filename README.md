@@ -4,9 +4,14 @@ This project implements a fully automated cloud-based infrastructure using **Ope
 
 ---
 
+## 👥 Collaboration Note
+
+This project was developed as part of a team during our DevOps course. We collaborated closely on all aspects — infrastructure provisioning, automation, and application deployment. All team members, including myself, contributed equally and worked together on every part of the project. 
+
+
 ## 🔍 Project Background
 
-Our team has been hired as consultants to design and deliver a scalable infrastructure for a client’s web service. The client expects a secure solution deployed and maintained via automation.
+We were given a situation that our team has been hired as consultants to design and deliver a scalable infrastructure for a client’s web service. The client expects a secure solution deployed and maintained via automation.
 
 ---
 
